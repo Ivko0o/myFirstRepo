@@ -15,7 +15,10 @@ void BoardField() {
 	int paddleLength = 5;  // Length of the paddle
 	char input = '\0';     // Store user input
 
-
+	int ballX = 17;  // Ball's initial row position
+	int ballY = paddleStart + 2;  // Ball's initial column position (centered on the paddle)
+	int ballDirX = -1;  // Ball moving up initially (row direction)
+	int ballDirY = 1;   // Ball moving right initially (column direction)
 
 
 	while (true) {
@@ -28,9 +31,9 @@ void BoardField() {
 			}
 		}
 
-		for (int v = 1; v < 7; v++) {
-			for (int z = 1; z < 27; z++) {
-				fieldArray[v][z] = '*';
+		for (int brickPositionX = 1; brickPositionX < 7; brickPositionX++) {
+			for (int brickPositionY = 1; brickPositionY < 27; brickPositionY++) {
+				fieldArray[brickPositionX][brickPositionY] = '*';
 			}
 		}
 
@@ -43,14 +46,38 @@ void BoardField() {
 				paddleStart++;  // Move paddle right
 			}
 		}
+
 		// Place the paddle at the new position
 		for (int j = paddleStart; j < paddleStart + paddleLength; j++) {
 			fieldArray[18][j] = '=';  // Draw paddle on the second-to-last row
 		}
 
+		ballX += ballDirX;
+		ballY += ballDirY;
+
+		// Check for ball collisions with walls and paddle
+		if (ballX <= 0) {  // Ball hits the top wall
+			ballDirX = 1;  // Bounce down
+		}
+		if (ballY <= 1 || ballY >= 25) {  // Ball hits the left or right wall
+			ballDirY = -ballDirY;  // Reverse horizontal direction
+		}
+		if (ballX == 18 && ballY >= paddleStart && ballY < paddleStart + paddleLength) {  // Ball hits the paddle
+			ballDirX = -1;  // Bounce up
+		}
+
+		// Ball reaches the bottom (lose condition or reset)
+		if (ballX >= 19) {
+			ballX = 17;  // Reset ball to above the paddle
+			ballY = paddleStart + 2;  // Center ball above the paddle
+			ballDirX = -1;  // Ball moves up again
+			ballDirY = 1;  // Ball moves right
+		}
+
+		// Place the ball at the new position
+		fieldArray[ballX][ballY] = 'o';
 
 
-		fieldArray[17][paddleStart + 2] = 'o';
 
 		for (int a = 0; a < 27; a++) {
 			int firstRow = 0;
