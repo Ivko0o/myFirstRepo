@@ -20,6 +20,8 @@ void BoardField() {
 	int ballDirX = -1;  // Ball moving up initially (row direction)
 	int ballDirY = 1;   // Ball moving right initially (column direction)
 
+	int scoreBoard = 0;
+
 
 	while (true) {
 
@@ -66,17 +68,29 @@ void BoardField() {
 			ballDirX = -1;  // Bounce up
 		}
 
+
+		if (ballX > 1 && ballX < 7) {                           // This was made by Ivelin so the 'o' can hit the bricks
+			ballDirX = 1;
+			fieldArray[6][2] = ' ';
+			scoreBoard += 10;
+		}
+		
+
+
 		// Ball reaches the bottom (lose condition or reset)
 		if (ballX >= 19) {
 			ballX = 17;  // Reset ball to above the paddle
 			ballY = paddleStart + 2;  // Center ball above the paddle
 			ballDirX = -1;  // Ball moves up again
 			ballDirY = 1;  // Ball moves right
+			cout << "Game over!" << endl;                          // This was built by Ivelin so the game can end. If you remove it, the game will constantly loop.
+			cout << "Your score is: " << scoreBoard;
+			break;
 		}
+
 
 		// Place the ball at the new position
 		fieldArray[ballX][ballY] = 'o';
-
 
 
 		for (int a = 0; a < 27; a++) {
