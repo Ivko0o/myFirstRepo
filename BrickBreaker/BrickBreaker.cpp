@@ -10,7 +10,7 @@ const int HM_ROWS = 7;
 const int HM_COLS = 26;
 
 void ClearScreen();
-void InitializeMap(char hitMap[HM_ROWS][HM_COLS], char fieldArray[ROWS][COLS], int rows, int cols);
+void InitMap(char hitMap[HM_ROWS][HM_COLS], char fieldArray[ROWS][COLS], int rows, int cols);
 void BallandPaddleMovement(char hitMap[][HM_COLS], char fieldArray[][COLS], int paddleBeginning, int paddleSize, char userInput, int ballInitX, int ballInitY, int ballDirectionX, int ballDirectionY, int highscore);
 void PrintField(char fieldArray[][COLS]);
 
@@ -32,7 +32,7 @@ int main()
 
 	while (true) {
 		ClearScreen();
-		InitializeMap(hitMap, fieldArray, ROWS, COLS);
+		InitMap(hitMap, fieldArray, ROWS, COLS);
 		BallandPaddleMovement(hitMap, fieldArray, paddleStart, paddleLength, input, ballX, ballY, ballDirX, ballDirY, scoreBoard);
 		PrintField(fieldArray);
 		Sleep(100);
@@ -49,7 +49,7 @@ void ClearScreen() {
 	std::cout << "\033[2J\033[1;1H";
 }
 
-void InitializeMap(char hitMap[HM_ROWS][HM_COLS], char fieldArray[ROWS][COLS], int rows, int cols) {
+void InitMap(char hitMap[HM_ROWS][HM_COLS], char fieldArray[ROWS][COLS], int rows, int cols) {
 
 	// Fills field with empty spaces
 	for (int i = 0; i < ROWS; i++) {
@@ -60,14 +60,11 @@ void InitializeMap(char hitMap[HM_ROWS][HM_COLS], char fieldArray[ROWS][COLS], i
 	// Place the bricks
 	for (int brickPositionX = 1; brickPositionX < 7; brickPositionX++) {
 		for (int brickPositionY = 1; brickPositionY < COLS; brickPositionY++) {
-			if (hitMap[brickPositionX][brickPositionY] == '.')
-				continue;
-
 			fieldArray[brickPositionX][brickPositionY] = '*';
 		}
 	}
 
-	// Draw the field
+	// Place top and bottom borders
 	for (int a = 0; a < COLS; a++) {
 		int firstRow = 0;
 		int lastRow = rows-1;
@@ -75,15 +72,13 @@ void InitializeMap(char hitMap[HM_ROWS][HM_COLS], char fieldArray[ROWS][COLS], i
 		fieldArray[lastRow][a] = '#';
 	}
 
-	// Draw the field
+	 // Place left and right borders
 	for (int b = 0; b < ROWS; b++) {
 		int firstColumn = 0;
 		int lastColumn = cols-1;
 		fieldArray[b][firstColumn] = '#';
 		fieldArray[b][lastColumn] = '#';
 	}
-
-
 }
 
 void BallandPaddleMovement(char hitMap[][HM_COLS], char fieldArray[][COLS], int paddleBeginning, int paddleSize, char userInput, int ballInitX, int ballInitY, int ballDirectionX, int ballDirectionY, int highscore) {
