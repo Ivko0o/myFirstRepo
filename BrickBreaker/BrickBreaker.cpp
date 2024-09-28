@@ -11,6 +11,7 @@ const int HM_COLS = 26;
 
 void ClearScreen();
 void InitMap(char hitMap[HM_ROWS][HM_COLS], char fieldArray[ROWS][COLS], int rows, int cols);
+void Paddle(char fieldArray[][COLS], int paddlePos_x, int paddleSize);
 void BallAndPaddleMovement(char hitMap[][HM_COLS], char fieldArray[][COLS], int paddleBeginning, int paddleSize, char userInput, int ballInitX, int ballInitY, int ballDirectionX, int ballDirectionY, int highscore);
 void PrintField(char fieldArray[][COLS]);
 void ProcessInput(int* paddlePos_x, int paddleLength);
@@ -35,7 +36,7 @@ int main()
 		ClearScreen();
 		InitMap(hitMap, fieldArray, ROWS, COLS);
 		ProcessInput(&paddlePos_x, paddleLength);
-		BallAndPaddleMovement(hitMap, fieldArray, paddlePos_x, paddleLength, input, ballX, ballY, ballDirX, ballDirY, scoreBoard);
+		Paddle(fieldArray, paddlePos_x, paddleLength);
 		PrintField(fieldArray);
 		Sleep(100);
 	}
@@ -96,12 +97,17 @@ void ProcessInput(int* paddlePos_x, int paddleLength)
 		}
 }
 
-void BallAndPaddleMovement(char hitMap[][HM_COLS], char fieldArray[][COLS], int paddleBeginning, int paddleSize, char userInput, int ballInitX, int ballInitY, int ballDirectionX, int ballDirectionY, int highscore) {
+void Paddle(char fieldArray[][COLS], int paddlePos_x, int paddleSize) {
+	// Place the paddle at the new position
+	for (int j = paddlePos_x; j < paddlePos_x + paddleSize; j++) {
+		fieldArray[18][j] = '=';  // Draw paddle on the second-to-last row
 
-		// Place the paddle at the new position
-		for (int j = paddleBeginning; j < paddleBeginning + paddleSize; j++) {
-			fieldArray[18][j] = '=';  // Draw paddle on the second-to-last row
+	}
+}
 
+/* void BallAndPaddleMovement(char hitMap[][HM_COLS], char fieldArray[][COLS], int paddlePos_x, int paddleSize, char userInput, int ballInitX, int ballInitY, int ballDirectionX, int ballDirectionY, int highscore) {
+
+		
 
 		ballInitX += ballDirectionX;
 		ballInitY += ballDirectionY;
@@ -113,7 +119,7 @@ void BallAndPaddleMovement(char hitMap[][HM_COLS], char fieldArray[][COLS], int 
 		if (ballInitY <= 1 || ballInitY >= 25) {  // Ball hits the left or right wall
 			ballDirectionY = -ballDirectionY;  // Reverse horizontal direction
 		}
-		if (ballInitX == 18 && ballInitY >= paddleBeginning && ballInitY < paddleBeginning + paddleSize) {  // Ball hits the paddle
+		if (ballInitX == 18 && ballInitY >= paddlePos_x && ballInitY < paddlePos_x + paddleSize) {  // Ball hits the paddle
 			ballDirectionX = -1;  // Bounce up
 		}
 
@@ -131,7 +137,7 @@ void BallAndPaddleMovement(char hitMap[][HM_COLS], char fieldArray[][COLS], int 
 		// Ball reaches the bottom (lose condition or reset)
 		if (ballInitX >= 19) {
 			ballInitX = 17;  // Reset ball to above the paddle
-			ballInitY = paddleBeginning + 2;  // Center ball above the paddle
+			ballInitY = paddlePos_x + 2;  // Center ball above the paddle
 			ballDirectionX = -1;  // Ball moves up again
 			ballDirectionY = 1;  // Ball moves right
 			cout << "Game over!" << endl;                          // This was built by Ivelin so the game can end. If you remove it, the game will constantly loop.
@@ -144,7 +150,7 @@ void BallAndPaddleMovement(char hitMap[][HM_COLS], char fieldArray[][COLS], int 
 		fieldArray[ballInitX][ballInitY] = 'o';
 	}
 
-}
+} */
 
 void PrintField(char fieldArray[][COLS]) {
 	// Print the field
