@@ -11,8 +11,10 @@ const int HM_COLS = 26;
 
 void ClearScreen();
 void InitMap(char hitMap[HM_ROWS][HM_COLS], char fieldArray[ROWS][COLS], int rows, int cols);
-void Paddle(char fieldArray[][COLS], int paddlePos_x, int paddleSize);
-void BallAndPaddleMovement(char hitMap[][HM_COLS], char fieldArray[][COLS], int paddleBeginning, int paddleSize, char userInput, int ballInitX, int ballInitY, int ballDirectionX, int ballDirectionY, int highscore);
+void MovePaddle(char fieldArray[][COLS], int paddlePos_x, int paddleSize);
+void MoveBall(char fieldArray[][COLS], int paddlePos_x, int paddleSize, int* ballX, int* ballY, int* ballDirX, int* ballDirY);
+bool CheckGameEnd(int ballY);
+//void BallAndPaddleMovement(char hitMap[][HM_COLS], char fieldArray[][COLS], int paddleBeginning, int paddleSize, char userInput, int ballInitX, int ballInitY, int ballDirectionX, int ballDirectionY, int highscore);
 void PrintField(char fieldArray[][COLS]);
 void ProcessInput(int* paddlePos_x, int paddleLength);
 
@@ -22,22 +24,25 @@ int main()
 	char hitMap[HM_ROWS][HM_COLS] = {};
 
 	int paddlePos_x = 11;  // The starting position of the paddle (left-most part)
-	int paddleLength = 5;  // Length of the paddle
+	int paddleSize = 5;  // Length of the paddle
 	char input = '\0';     // Store user input
 
-	int ballX = 17;  // Ball's initial row position
-	int ballY = paddlePos_x + 2;  // Ball's initial column position (centered on the paddle)
-	int ballDirX = -1;  // Ball moving up initially (row direction)
-	int ballDirY = 1;   // Ball moving right initially (column direction)
+	int ballY = 17;  // Ball's initial row position
+	int ballX = paddlePos_x + 2;  // Ball's initial column position (centered on the paddle)
+	int ballDirY = -1;  // Ball moving up initially (row direction)
+	int ballDirX = 1;   // Ball moving right initially (column direction)
 
 	int scoreBoard = 0;
 
 	while (true) {
 		ClearScreen();
 		InitMap(hitMap, fieldArray, ROWS, COLS);
-		ProcessInput(&paddlePos_x, paddleLength);
-		Paddle(fieldArray, paddlePos_x, paddleLength);
+		ProcessInput(&paddlePos_x, paddleSize);
+		MovePaddle(fieldArray, paddlePos_x, paddleSize);
+		MoveBall(fieldArray, paddlePos_x, paddleSize, &ballX, &ballY, &ballDirX, &ballDirY);
 		PrintField(fieldArray);
+		if (CheckGameEnd(ballY) == false)
+			return false;
 		Sleep(100);
 	}
 
@@ -97,11 +102,40 @@ void ProcessInput(int* paddlePos_x, int paddleLength)
 		}
 }
 
-void Paddle(char fieldArray[][COLS], int paddlePos_x, int paddleSize) {
+void MovePaddle(char fieldArray[][COLS], int paddlePos_x, int paddleSize) {
 	// Place the paddle at the new position
 	for (int j = paddlePos_x; j < paddlePos_x + paddleSize; j++) {
 		fieldArray[18][j] = '=';  // Draw paddle on the second-to-last row
+	}
+}
 
+void MoveBall(char fieldArray[][COLS],int paddlePos_x, int paddleSize, int* ballX, int* ballY, int* ballDirX, int* ballDirY) {
+
+	fieldArray[*ballY][*ballX] = 'o';
+
+	*ballX += *ballDirX;
+	*ballY += *ballDirY;
+
+	// Check for ball collisions with walls and paddle
+		// walls
+	if (*ballY <= 0) {  // Ball hits the top wall
+		*ballDirY = 1;  // Bounce down
+	}
+	if (*ballX <= 1 || *ballX >= 25) {  // Ball hits the left or right wall
+		*ballDirX = -(*ballDirX);  // Reverse horizontal direction
+	}
+
+	// Paddle
+	if (*ballY == 18 && *ballX >= paddlePos_x && *ballDirX < paddlePos_x + paddleSize) {  // Ball hits the paddle
+		*ballDirY = -1;  // Bounce up
+	}
+	
+}
+
+bool CheckGameEnd(int ballY) {
+	if (ballY >= 19) {
+		cout << "Game over!" << endl;
+		return false;
 	}
 }
 
