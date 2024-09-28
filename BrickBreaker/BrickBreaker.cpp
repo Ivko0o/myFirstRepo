@@ -14,10 +14,10 @@ void InitMap(char hitMap[HM_ROWS][HM_COLS], char fieldArray[ROWS][COLS], int row
 void InitializeBricks(char hitMap[][HM_COLS]);
 void MovePaddle(char fieldArray[][COLS], int paddlePos_x, int paddleSize);
 void MoveBall(char fieldArray[][COLS], int paddlePos_x, int paddleSize, int* ballX, int* ballY, int* ballDirX, int* ballDirY);
-void BrickCollision(char fieldArray[][COLS], int ballY, int ballX);
+void BrickCollision(char hm[][HM_COLS], int ballY, int ballX);
 bool CheckGameEnd(int ballY);
 //void BallAndPaddleMovement(char hitMap[][HM_COLS], char fieldArray[][COLS], int paddleBeginning, int paddleSize, char userInput, int ballInitX, int ballInitY, int ballDirectionX, int ballDirectionY, int highscore);
-void PrintField(char fieldArray[][COLS]);
+void PrintField(char fieldArray[][COLS], char hm[][HM_COLS]);
 void ProcessInput(int* paddlePos_x, int paddleLength);
 
 int main()
@@ -35,16 +35,16 @@ int main()
 	int ballDirX = 1;   // Ball moving right initially (column direction)
 
 	int scoreBoard = 0;
+	InitializeBricks(hitMap);
 
 	while (true) {
 		ClearScreen();
 		InitMap(hitMap, fieldArray, ROWS, COLS);
-		InitializeBricks(hitMap);
 		ProcessInput(&paddlePos_x, paddleSize);
 		MovePaddle(fieldArray, paddlePos_x, paddleSize);
 		MoveBall(fieldArray, paddlePos_x, paddleSize, &ballX, &ballY, &ballDirX, &ballDirY);
-		BrickCollision(fieldArray, ballY, ballX);
-		PrintField(fieldArray);
+		BrickCollision(hitMap, ballY, ballX);
+		PrintField(fieldArray, hitMap);
 		if (CheckGameEnd(ballY) == false)
 			return false;
 		Sleep(100);
@@ -72,6 +72,8 @@ void InitMap(char hitMap[HM_ROWS][HM_COLS], char fieldArray[ROWS][COLS], int row
 	// Place the bricks
 	for (int brickPositionX = 1; brickPositionX < 7; brickPositionX++) {
 		for (int brickPositionY = 1; brickPositionY < COLS; brickPositionY++) {
+			if (hitMap[brickPositionX][brickPositionY] == '.' )
+				continue;
 			fieldArray[brickPositionX][brickPositionY] = '*';
 		}
 	}
@@ -145,10 +147,10 @@ void MoveBall(char fieldArray[][COLS],int paddlePos_x, int paddleSize, int* ball
 	}
 	
 }
-void BrickCollision(char fieldArray[][COLS], int ballY, int ballX) {
+void BrickCollision(char hitMap[][HM_COLS], int ballY, int ballX) {
 	if (ballY < HM_ROWS && ballY >=0 && ballX < HM_COLS && ballX >= 0) {
-		if (fieldArray[ballY][ballX] == '*')
-			fieldArray[ballY][ballX] = ' ';
+		if (hitMap[ballY][ballX] == '*')
+			hitMap[ballY][ballX] = '.';
 	}
 }
 
@@ -157,6 +159,7 @@ bool CheckGameEnd(int ballY) {
 		cout << "Game over!" << endl;
 		return false;
 	}
+
 }
 
 /* void BallAndPaddleMovement(char hitMap[][HM_COLS], char fieldArray[][COLS], int paddlePos_x, int paddleSize, char userInput, int ballInitX, int ballInitY, int ballDirectionX, int ballDirectionY, int highscore) {
@@ -206,11 +209,17 @@ bool CheckGameEnd(int ballY) {
 
 } */
 
-void PrintField(char fieldArray[][COLS]) {
+void PrintField(char fieldArray[][COLS], char hm[][HM_COLS]) {
 	// Print the field
 	for (int i = 0; i < ROWS; i++) {
 		cout << endl;
 		for (int j = 0; j < COLS; j++) {
+			if (hm[i][j] == '.')
+			{
+				cout << " ";
+				continue;
+			}
+				
 			cout << fieldArray[i][j];
 		}
 	}
