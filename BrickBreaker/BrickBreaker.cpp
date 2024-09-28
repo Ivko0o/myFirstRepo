@@ -11,8 +11,10 @@ const int HM_COLS = 26;
 
 void ClearScreen();
 void InitMap(char hitMap[HM_ROWS][HM_COLS], char fieldArray[ROWS][COLS], int rows, int cols);
+void InitializeBricks(char hitMap[][HM_COLS]);
 void MovePaddle(char fieldArray[][COLS], int paddlePos_x, int paddleSize);
 void MoveBall(char fieldArray[][COLS], int paddlePos_x, int paddleSize, int* ballX, int* ballY, int* ballDirX, int* ballDirY);
+void BrickCollision(char fieldArray[][COLS], int ballY, int ballX);
 bool CheckGameEnd(int ballY);
 //void BallAndPaddleMovement(char hitMap[][HM_COLS], char fieldArray[][COLS], int paddleBeginning, int paddleSize, char userInput, int ballInitX, int ballInitY, int ballDirectionX, int ballDirectionY, int highscore);
 void PrintField(char fieldArray[][COLS]);
@@ -37,9 +39,11 @@ int main()
 	while (true) {
 		ClearScreen();
 		InitMap(hitMap, fieldArray, ROWS, COLS);
+		InitializeBricks(hitMap);
 		ProcessInput(&paddlePos_x, paddleSize);
 		MovePaddle(fieldArray, paddlePos_x, paddleSize);
 		MoveBall(fieldArray, paddlePos_x, paddleSize, &ballX, &ballY, &ballDirX, &ballDirY);
+		BrickCollision(fieldArray, ballY, ballX);
 		PrintField(fieldArray);
 		if (CheckGameEnd(ballY) == false)
 			return false;
@@ -89,6 +93,16 @@ void InitMap(char hitMap[HM_ROWS][HM_COLS], char fieldArray[ROWS][COLS], int row
 	}
 }
 
+void InitializeBricks(char hitMap[][HM_COLS]) {
+
+	// Initializing the bricks in the game field
+	for (int i = 0; i < HM_ROWS; i++) {
+		for (int j = 1; j < HM_COLS; j++) {
+			hitMap[i][j] = '*';
+		}
+	}
+}
+
 void ProcessInput(int* paddlePos_x, int paddleLength)
 {
 		if (_kbhit()) {
@@ -130,6 +144,12 @@ void MoveBall(char fieldArray[][COLS],int paddlePos_x, int paddleSize, int* ball
 		*ballDirY = -1;  // Bounce up
 	}
 	
+}
+void BrickCollision(char fieldArray[][COLS], int ballY, int ballX) {
+	if (ballY < HM_ROWS && ballY >=0 && ballX < HM_COLS && ballX >= 0) {
+		if (fieldArray[ballY][ballX] == '*')
+			fieldArray[ballY][ballX] = ' ';
+	}
 }
 
 bool CheckGameEnd(int ballY) {
