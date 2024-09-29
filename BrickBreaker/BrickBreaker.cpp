@@ -14,7 +14,7 @@ void InitMap(char hitMap[HM_ROWS][HM_COLS], char fieldArray[ROWS][COLS], int row
 void InitializeBricks(char hitMap[][HM_COLS]);
 void MovePaddle(char fieldArray[][COLS], int paddlePos_x, int paddleSize);
 void MoveBall(char fieldArray[][COLS], int paddlePos_x, int paddleSize, int* ballX, int* ballY, int* ballDirX, int* ballDirY);
-void BrickCollision(char hm[][HM_COLS], int ballY, int ballX);
+void BrickCollision(char hitMap[][HM_COLS], int ballY, int ballX, int* ballDirY);
 bool CheckGameEnd(int ballY);
 //void BallAndPaddleMovement(char hitMap[][HM_COLS], char fieldArray[][COLS], int paddleBeginning, int paddleSize, char userInput, int ballInitX, int ballInitY, int ballDirectionX, int ballDirectionY, int highscore);
 void PrintField(char fieldArray[][COLS], char hm[][HM_COLS]);
@@ -43,18 +43,12 @@ int main()
 		ProcessInput(&paddlePos_x, paddleSize);
 		MovePaddle(fieldArray, paddlePos_x, paddleSize);
 		MoveBall(fieldArray, paddlePos_x, paddleSize, &ballX, &ballY, &ballDirX, &ballDirY);
-		BrickCollision(hitMap, ballY, ballX);
+		BrickCollision(hitMap, ballY, ballX, &ballDirY);
 		PrintField(fieldArray, hitMap);
 		if (CheckGameEnd(ballY) == false)
 			return false;
 		Sleep(100);
 	}
-
-
-	/* for (int i = 0; i < HM_ROWS; i++) {
-	for (int j = 1; j < HM_COLS; j++) {										рнгх кнно ме е днаюбъм
-		hitMap[i][j] = '*';
-	} */
 }
 
 void ClearScreen() {
@@ -134,7 +128,7 @@ void MoveBall(char fieldArray[][COLS],int paddlePos_x, int paddleSize, int* ball
 
 	// Check for ball collisions with walls and paddle
 		// walls
-	if (*ballY <= 0) {  // Ball hits the top wall
+	if (*ballY <= 1) {  // Ball hits the top wall
 		*ballDirY = 1;  // Bounce down
 	}
 	if (*ballX <= 1 || *ballX >= 25) {  // Ball hits the left or right wall
@@ -145,16 +139,21 @@ void MoveBall(char fieldArray[][COLS],int paddlePos_x, int paddleSize, int* ball
 	if (*ballY == 18 && *ballX >= paddlePos_x && *ballDirX < paddlePos_x + paddleSize) {  // Ball hits the paddle
 		*ballDirY = -1;  // Bounce up
 	}
+
+
 	
 }
-void BrickCollision(char hitMap[][HM_COLS], int ballY, int ballX) {
-	if (ballY < HM_ROWS && ballY >=0 && ballX < HM_COLS && ballX >= 0) {
-		if (hitMap[ballY][ballX] == '*')
+void BrickCollision(char hitMap[][HM_COLS], int ballY, int ballX, int* ballDirY) {
+	if (ballY < HM_ROWS && ballY > 0 && ballX < HM_COLS && ballX > 0) {
+		if(hitMap[ballY][ballX] == '*') {
 			hitMap[ballY][ballX] = '.';
+			*ballDirY = -(*ballDirY);
+		}
 	}
-}
+		
+	}
 
-bool CheckGameEnd(int ballY) {
+bool CheckGameEnd(int ballY){
 	if (ballY >= 19) {
 		cout << "Game over!" << endl;
 		return false;
