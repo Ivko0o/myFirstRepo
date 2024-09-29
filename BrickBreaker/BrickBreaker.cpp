@@ -27,17 +27,15 @@ int main()
 
 	int paddlePos_x = 11;  // The starting position of the paddle (left-most part)
 	int paddleSize = 5;  // Length of the paddle
-	char input = '\0';     // Store user input
 
 	int ballY = 17;  // Ball's initial row position
 	int ballX = paddlePos_x + 2;  // Ball's initial column position (centered on the paddle)
 	int ballDirY = -1;  // Ball moving up initially (row direction)
 	int ballDirX = 1;   // Ball moving right initially (column direction)
 
-	int scoreBoard = 0;
 	InitializeBricks(hitMap);
 
-	while (true) {
+	while (CheckGameEnd(ballY)){
 		ClearScreen();
 		InitMap(hitMap, fieldArray, ROWS, COLS);
 		ProcessInput(&paddlePos_x, paddleSize);
@@ -49,12 +47,7 @@ int main()
 			break;
 		Sleep(100);
 	}
-	for (int i = 0; i < HM_ROWS; i++) {
-		for (int j = 0; i < HM_COLS; i++) {
-			cout << hitMap[i][j] << " ";
-		}
-	}
-	//CountScore(hitMap);
+	CountScore(hitMap);
 }
 
 void ClearScreen() {
@@ -164,18 +157,12 @@ void BrickCollision(char hitMap[][HM_COLS], int ballY, int ballX, int* ballDirY)
 void CountScore(char hitMap[][HM_COLS]) {
 	int scoreBoard = 0;
 	for (int i = 0; i < HM_ROWS; i++) {
-		for (int j = 0; i < HM_COLS; i++) {
+		for (int j = 0; j < HM_COLS; j++) {
 			if (hitMap[i][j] == '.') {
 				scoreBoard += 10;
 			}
 		}
 	}
-	for (int i = 0; i < HM_ROWS; i++) {
-		for (int j = 0; i < HM_COLS; i++) {
-			cout << hitMap[i][j] << " ";
-		}
-	}
-	cout << endl;
 	cout << "Your score is: " << scoreBoard;
 }
 
@@ -193,12 +180,16 @@ void PrintField(char fieldArray[][COLS], char hm[][HM_COLS]) {
 	for (int i = 0; i < ROWS; i++) {
 		cout << endl;
 		for (int j = 0; j < COLS; j++) {
+			if (fieldArray[i][j] == 'o') {
+				cout << "o";
+				continue;
+			}
+
 			if (hm[i][j] == '.')
 			{
 				cout << " ";
 				continue;
-			}
-				
+			}				
 			cout << fieldArray[i][j];
 		}
 	}
