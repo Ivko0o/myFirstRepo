@@ -136,7 +136,7 @@ void MoveBall(char fieldArray[][COLS],int paddlePos_x, int paddleSize, int* ball
 	}
 
 	// Paddle
-	if (*ballY == 18 && *ballX >= paddlePos_x && *ballDirX < paddlePos_x + paddleSize) {  // Ball hits the paddle
+	if (*ballY == 18 && *ballX >= paddlePos_x && *ballX < paddlePos_x + paddleSize) {  // Ball hits the paddle
 		*ballDirY = -1;  // Bounce up
 	}
 
@@ -157,58 +157,12 @@ void BrickCollision(char hitMap[][HM_COLS], int ballY, int ballX, int* ballDirY)
 
 bool CheckGameEnd(int ballY){
 	if (ballY >= 19) {
+		cout << endl;
 		cout << "Game over!" << endl;
 		return false;
 	}
 
 }
-
-/* void BallAndPaddleMovement(char hitMap[][HM_COLS], char fieldArray[][COLS], int paddlePos_x, int paddleSize, char userInput, int ballInitX, int ballInitY, int ballDirectionX, int ballDirectionY, int highscore) {
-
-		
-
-		ballInitX += ballDirectionX;
-		ballInitY += ballDirectionY;
-
-		// Check for ball collisions with walls and paddle
-		if (ballInitX <= 0) {  // Ball hits the top wall
-			ballDirectionX = 1;  // Bounce down
-		}
-		if (ballInitY <= 1 || ballInitY >= 25) {  // Ball hits the left or right wall
-			ballDirectionY = -ballDirectionY;  // Reverse horizontal direction
-		}
-		if (ballInitX == 18 && ballInitY >= paddlePos_x && ballInitY < paddlePos_x + paddleSize) {  // Ball hits the paddle
-			ballDirectionX = -1;  // Bounce up
-		}
-
-
-		if (ballInitX > 1 && ballInitX < 7) {                           // This was made by Ivelin so the 'o' can hit the bricks
-			if (hitMap[ballInitX][ballInitY] == '*') {
-				ballDirectionX = -ballDirectionX;
-				hitMap[ballInitX][ballInitY] = '.';
-				highscore += 10;
-			}
-		}
-
-
-
-		// Ball reaches the bottom (lose condition or reset)
-		if (ballInitX >= 19) {
-			ballInitX = 17;  // Reset ball to above the paddle
-			ballInitY = paddlePos_x + 2;  // Center ball above the paddle
-			ballDirectionX = -1;  // Ball moves up again
-			ballDirectionY = 1;  // Ball moves right
-			cout << "Game over!" << endl;                          // This was built by Ivelin so the game can end. If you remove it, the game will constantly loop.
-			cout << "Your score is: " << highscore;
-			break;
-		}
-
-
-		// Place the ball at the new position
-		fieldArray[ballInitX][ballInitY] = 'o';
-	}
-
-} */
 
 void PrintField(char fieldArray[][COLS], char hm[][HM_COLS]) {
 	// Print the field
