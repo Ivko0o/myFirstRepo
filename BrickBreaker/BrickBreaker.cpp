@@ -144,6 +144,8 @@ void MoveBall(char fieldArray[][COLS],int paddlePos_x, int paddleSize, int* ball
 	
 }
 void BrickCollision(char hitMap[][HM_COLS], int ballY, int ballX, int* ballDirY) {
+
+	// Checks if ball has hit a brick and change the direction
 	if (ballY < HM_ROWS && ballY > 0 && ballX < HM_COLS && ballX > 0) {
 		if(hitMap[ballY][ballX] == '*') {
 			hitMap[ballY][ballX] = '.';
