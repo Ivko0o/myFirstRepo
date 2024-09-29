@@ -15,8 +15,8 @@ void InitializeBricks(char hitMap[][HM_COLS]);
 void MovePaddle(char fieldArray[][COLS], int paddlePos_x, int paddleSize);
 void MoveBall(char fieldArray[][COLS], int paddlePos_x, int paddleSize, int* ballX, int* ballY, int* ballDirX, int* ballDirY);
 void BrickCollision(char hitMap[][HM_COLS], int ballY, int ballX, int* ballDirY);
+void CountScore(char hitMap[][HM_COLS]);
 bool CheckGameEnd(int ballY);
-//void BallAndPaddleMovement(char hitMap[][HM_COLS], char fieldArray[][COLS], int paddleBeginning, int paddleSize, char userInput, int ballInitX, int ballInitY, int ballDirectionX, int ballDirectionY, int highscore);
 void PrintField(char fieldArray[][COLS], char hm[][HM_COLS]);
 void ProcessInput(int* paddlePos_x, int paddleLength);
 
@@ -46,9 +46,15 @@ int main()
 		BrickCollision(hitMap, ballY, ballX, &ballDirY);
 		PrintField(fieldArray, hitMap);
 		if (CheckGameEnd(ballY) == false)
-			return false;
+			break;
 		Sleep(100);
 	}
+	for (int i = 0; i < HM_ROWS; i++) {
+		for (int j = 0; i < HM_COLS; i++) {
+			cout << hitMap[i][j] << " ";
+		}
+	}
+	//CountScore(hitMap);
 }
 
 void ClearScreen() {
@@ -145,7 +151,7 @@ void MoveBall(char fieldArray[][COLS],int paddlePos_x, int paddleSize, int* ball
 }
 void BrickCollision(char hitMap[][HM_COLS], int ballY, int ballX, int* ballDirY) {
 
-	// Checks if ball has hit a brick and change the direction
+	// Checks if the ball hits a brick and change the direction
 	if (ballY < HM_ROWS && ballY > 0 && ballX < HM_COLS && ballX > 0) {
 		if(hitMap[ballY][ballX] == '*') {
 			hitMap[ballY][ballX] = '.';
@@ -155,7 +161,25 @@ void BrickCollision(char hitMap[][HM_COLS], int ballY, int ballX, int* ballDirY)
 		
 	}
 
-bool CheckGameEnd(int ballY){
+void CountScore(char hitMap[][HM_COLS]) {
+	int scoreBoard = 0;
+	for (int i = 0; i < HM_ROWS; i++) {
+		for (int j = 0; i < HM_COLS; i++) {
+			if (hitMap[i][j] == '.') {
+				scoreBoard += 10;
+			}
+		}
+	}
+	for (int i = 0; i < HM_ROWS; i++) {
+		for (int j = 0; i < HM_COLS; i++) {
+			cout << hitMap[i][j] << " ";
+		}
+	}
+	cout << endl;
+	cout << "Your score is: " << scoreBoard;
+}
+
+bool CheckGameEnd(int ballY) {
 	if (ballY >= 19) {
 		cout << endl;
 		cout << "Game over!" << endl;
